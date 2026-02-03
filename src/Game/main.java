@@ -12,6 +12,7 @@ public class main {
     static int deathRoom = -1;
     static int roomNumber = 0;
     static String input;
+    static int position;
 
     static int monsterGoldDrop;
     static int monsterDamage;
@@ -51,24 +52,14 @@ public class main {
 
     public static void main(String[] args) {
 
-        startSequenz(headline, delay);
+        startSequenz();
 
         //Länge des Spiels
-        for (int position = 0; position < dungeon.length; position++) {
+        for (position = 0; position < dungeon.length; position++) {
             System.out.print("Gib rechts, links, hoch oder runter ein um dich zu bewegen: ");
             input = entry.nextLine().toLowerCase();
             if (input.equals("!status")) {
-                System.out.println("-----STATUS-----");
-                System.out.println("Spielerlevel: " + playerLevel);
-                System.out.println("Erfahrung: " + playerCurrentExp + "/" + playerNeededExp);
-                System.out.println("Leben: " + playerCurrentLife + "/" + playerMaxLife);
-                System.out.println("Stärke: " + (playerStr + playerWeaponAtk + 10));
-                System.out.println("Rüstung: " + (playerDef + 10));
-                System.out.println("Gold: " + playerGold);
-                System.out.println("Kills : " + playerKilledMonsters);
-                System.out.println("Überlebte Räume: " + position);
-                System.out.println(" ");
-                position--;
+                statusMessage();
                 continue;
 
             } else if (input.equals("rechts")) {
@@ -117,17 +108,7 @@ public class main {
 
                 //Raum 4: Heiltrank
             } else if (roomNumber == 3) {
-                if (playerMaxLife - playerCurrentLife <= 5) {
-                    playerCurrentLife = playerMaxLife;
-                    System.out.println("Du hast einen mini Heilaal gefunden und hast dein maximales Leben aufgefüllt!");
-                    System.out.println("Du hast jetzt " + playerCurrentLife + " Leben!");
-                    System.out.println(" ");
-                } else if (playerMaxLife - playerCurrentLife > 5) {
-                    playerCurrentLife += 5;
-                    System.out.println("Du hast einen mini-Heilaal gefunden und bekommst 5 Leben dazu!");
-                    System.out.println("Du hast jetzt " + playerCurrentLife + " Leben!");
-                    System.out.println(" ");
-                }
+                healEel();
 
                 //Raum 5: MonsterRaum
             } else if (roomNumber == 4) {
@@ -193,14 +174,7 @@ public class main {
             }
             //Levelkontrolle
             if (playerCurrentExp >= playerNeededExp) {
-                playerCurrentExp = 0;
-                playerNeededExp += 25;
-                playerMaxLife += 5;
-                playerStr += 2;
-                playerLevel++;
-                System.out.println("Level up! Du bist jetzt Level " + playerLevel + " !");
-                System.out.println("Dein maximales Leben hat sich auf " + playerMaxLife + " erhöht!");
-                System.out.println("Dein Stärkewert hat sich auf " + (10 + playerStr) + " erhöht");
+                levelControl();
             } else {
                 continue;
             }
@@ -252,7 +226,7 @@ public class main {
         }
     }
     //Startsequenz
-    public static void startSequenz(String headline, int delay) {
+    public static void startSequenz() {
         for (int i = 0; i < headline.length(); i++) {
             System.out.printf(ANSI_GREEN + headline.charAt(i) + ANSI_RESET);
             try {
@@ -285,18 +259,24 @@ public class main {
             monsterExp = 1 + (playerLevel * 2);
             monsterHp = 28 + (playerLevel * 2);
         } else if (monsterRandom <= 90) {
-            monsterName = "Elena";
+            monsterName = "Elenaal";
             monsterGoldDrop = rand.nextInt(3, 23) + (playerLevel * 2);
             monsterDamage = rand.nextInt(3, 13) + (playerLevel * 2);
             monsterExp = 13 + (playerLevel * 2);
             monsterHp = 98 + (playerLevel * 2);
-        } else if (monsterRandom <= 100) {
+        } else if (monsterRandom <= 99) {
             monsterName = "Velcast";
             monsterGoldDrop = rand.nextInt(8, 48) + (playerLevel * 2);
             monsterDamage = rand.nextInt(3, 28) + (playerLevel * 2);
             monsterExp = 56 + (playerLevel * 2);
             monsterHp = 248 + (playerLevel * 5);
-        }
+        } else if (monsterRandom == 100) {
+            monsterName = "Kadir-'n'-Aal";
+            monsterGoldDrop = rand.nextInt(50, 500) + (playerLevel * 2);
+            monsterDamage = rand.nextInt(1, 150) + (playerLevel * 2);
+            monsterDmgOvertime = 15;
+            monsterExp = 98 + (playerLevel * 2);
+            monsterHp = 398 + (playerLevel * 2);
     }
     //Angriffe
     public static void playerAttack (int playerAttackStr)  {
@@ -314,6 +294,47 @@ public class main {
         }
 
     }
+    //Level Kontrolle
+    public static void levelControl(){
+        playerCurrentExp = 0;
+        playerNeededExp += 25;
+        playerMaxLife += 5;
+        playerStr += 2;
+        playerLevel++;
+        System.out.println("Level up! Du bist jetzt Level " + playerLevel + " !");
+        System.out.println("Dein maximales Leben hat sich auf " + playerMaxLife + " erhöht!");
+        System.out.println("Dein Stärkewert hat sich auf " + (10 + playerStr) + " erhöht");
+    }
+    //Statusausgabe
+    public static void statusMessage() {
+        System.out.println("-----STATUS-----");
+        System.out.println("Spielerlevel: " + playerLevel);
+        System.out.println("Erfahrung: " + playerCurrentExp + "/" + playerNeededExp);
+        System.out.println("Leben: " + playerCurrentLife + "/" + playerMaxLife);
+        System.out.println("Stärke: " + (playerStr + playerWeaponAtk + 10));
+        System.out.println("Rüstung: " + (playerDef + 10));
+        System.out.println("Gold: " + playerGold);
+        System.out.println("Kills : " + playerKilledMonsters);
+        System.out.println("Überlebte Räume: " + position);
+        System.out.println(" ");
+        position--;
+    }
+    //Raum Heilung
+    public static void healEel() {
+        if (playerMaxLife - playerCurrentLife <= 5) {
+            playerCurrentLife = playerMaxLife;
+            System.out.println("Du hast einen mini Heilaal gefunden und hast dein maximales Leben aufgefüllt!");
+            System.out.println("Du hast jetzt " + playerCurrentLife + " Leben!");
+            System.out.println(" ");
+        } else if (playerMaxLife - playerCurrentLife > 5) {
+            playerCurrentLife += 5;
+            System.out.println("Du hast einen mini-Heilaal gefunden und bekommst 5 Leben dazu!");
+            System.out.println("Du hast jetzt " + playerCurrentLife + " Leben!");
+            System.out.println(" ");
+        }
+    }
+
+
 
 }
 
