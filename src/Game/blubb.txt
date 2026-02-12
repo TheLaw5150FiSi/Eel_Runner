@@ -1,8 +1,31 @@
+Update
+
+Difficulty  System
+1.	Difficulty variable beeinflusst alle Systeme
+2.	Monsterwert
+3.	Gold, EXP, Heilung
+4.	Warscheinlihckeiten der räume
+
+Difficulties
+1.	Easy -20% Monster HP, -30% Schaden, +30% Gold, +20% EXP, +50% Heilung
+2.	Normal keine Modifikationen
+3.	Hard +30% Monster HP, +40% Schaden, -20% Gold, -10% EXP, -30% Heilung
+4.	Nightmare +70% Monster HP, +80% Schaden, -40% Gold, -30% EXP, -50% Heilung
+
+Räume
+1.	 Easy Mehr heilräume, weniger monster
+2.	 Normal Ausgewogene Verteilung
+3.	 Hard Erhöhte Monster und Fallen Chance
+4.	 Nightmare sehr hohe Monsterwahrscheinlichkeit, seltene Shops
+
+Optionen
+1.	Garantierter Händler nach X Räumen
+2.	Schwierigkeit zu !status und Resultat hinzufügen
+
+Andere Features
+1.	Neue Räume z.B. Minigame
+2.	Trefferrate, crit chance, crit dmg
 
 
-shop items
 
-großer heilaal +20hp -50 gold
-exp allexier +20 exp -125 gold
-fähigkeit zitteraal +str -275 gold
-fähigkeit blitz-aura +def -275 gold
+
