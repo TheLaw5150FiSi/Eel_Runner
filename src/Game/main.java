@@ -332,6 +332,7 @@ public class main {
             System.out.println("Du hast einen mini-Heilaal gefunden und bekommst 5 Leben dazu!");
             System.out.println("Du hast jetzt " + playerCurrentLife + " Leben!");
             System.out.println(" ");
+            System.out.println(" ");
         }
     }
 
