@@ -11,7 +11,7 @@ Difficulties
 2.	Normal keine Modifikationen
 3.	Hard +30% Monster HP, +40% Schaden, -20% Gold, -10% EXP, -30% Heilung
 4.	Nightmare +70% Monster HP, +80% Schaden, -40% Gold, -30% EXP, -50% Heilung
-
+monsterHpMod
 Räume
 1.	 Easy Mehr heilräume, weniger monster
 2.	 Normal Ausgewogene Verteilung
@@ -22,10 +22,9 @@ Optionen
 1.	Garantierter Händler nach X Räumen
 2.	Schwierigkeit zu !status und Resultat hinzufügen
 
+
 Andere Features
 1.	Neue Räume z.B. Minigame
 2.	Trefferrate, crit chance, crit dmg
-
-
 
 

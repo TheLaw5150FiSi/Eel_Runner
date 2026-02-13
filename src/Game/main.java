@@ -1,5 +1,8 @@
 package Game;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,6 +23,7 @@ public class main {
     static int monsterExp;
     static int monsterRandom;
     static int monsterDmgOvertime = 0;
+    static int monsterTaalerDrop = 0;
     static String monsterName;
 
     static int itemAal38 = 1;
@@ -35,6 +39,7 @@ public class main {
     static int playerWeaponAtk;
     static int playerDamage;
     static int playerGold = 0;
+    static int playerTaaler = 0;
     static int playerKilledMonsters = 0;
     static int playerEnteredRooms = 0;
     static int playerAbilityElectricEel = 0;
@@ -54,6 +59,22 @@ public class main {
     static Random rand = new Random();
     static Scanner entry = new Scanner(System.in);
 
+    //Schwierigkei Variablen
+    enum Difficulty {
+        AALGLATT,
+        NORMAAL,
+        BRUTAAL,
+        QUAALVOLL
+    }
+
+    static main.Difficulty difficulty = main.Difficulty.NORMAAL;
+    static double monsterHpMod = 1.0;
+    static double monsterDmgMod = 1.0;
+    static double goldMod = 1.0;
+    static double expMod = 1.0;
+    static double healMod = 1.0;
+    static int shopInterval = 8;
+
     public static void main(String[] args) {
 
         startSequenz();
@@ -70,7 +91,7 @@ public class main {
                     || input.equals("links")
                     || input.equals("hoch")
                     || input.equals("runter")) {
-                roomNumber = rand.nextInt(0, 6);
+                roomNumber = rand.nextInt(4, 5);
             } else {
                 position--;
                 System.out.println("Bitte gültigen Wert eingeben!");
@@ -91,9 +112,11 @@ public class main {
 
                 //Raum 2: Schatz
             } else if (roomNumber == 1) {
-                playerGold = playerGold + 20;
+                playerGold += 20;
+                playerTaaler += 5;
                 playerCurrentExp += 10;
                 playerReachedExp += 10;
+                savegame(playerTaaler);
                 System.out.println("Du hast einen Schatzgefunden! +20 Gold!");
                 System.out.println("Du erhältst 10 Erfahrung!");
                 System.out.println(" ");
@@ -126,7 +149,7 @@ public class main {
                     System.out.println("Du bist geflohen!");
                 } else if (input.equals("ja")) {
                     do {
-                        monsterDamage = rand.nextInt(5);
+                        //monsterDamage = rand.nextInt(5);
                         System.out.println("Wie möchtest du angreifen? Faust / Tritt / Schwert?");
                         System.out.println("Oder möchtest du fliehen (Aal38)?");
                         System.out.print("Eingabe: ");
@@ -231,45 +254,65 @@ public class main {
         System.out.println("Willkommen bei eel runner! - Kämpfe dich als Aal durch eine Welt voller Einhörner, Regenwürmer und anderen wilden Getier! ");
         System.out.println("Der lange Aal schlackert im Nebel der Schlacht!");
         System.out.println("Um deine Stats zu sehen, tippe !Status ein.");
+        System.out.println("Auf welcher Schwierigkeitsstufe möchtest du spielen?");
+        System.out.println("1. Aalglatt - Gleite mühelos und ohne Widerstand hindurch.");
+        System.out.println("2. NormAal - Ein ausgeglichenes Abenteuer im seichten Gewässer.");
+        System.out.println("3. BrutAal - Hier weht dir eine scharfe Brise entgegen.");
+        System.out.println("4. QuAalvoll - Nur für extrem leidensfähige und zähe Fische.");
+        System.out.println("Wähle weise!!");
+        System.out.print("Eingabe: ");
+        input = entry.nextLine().toLowerCase();
+
+        switch (input) {
+            case "aalglatt" -> difficulty = main.Difficulty.AALGLATT;
+            case "brutaal" -> difficulty = main.Difficulty.BRUTAAL;
+            case "quaalvoll" -> difficulty = main.Difficulty.QUAALVOLL;
+            default -> difficulty = main.Difficulty.NORMAAL;
+        }
+        difficultySettings();
+        System.out.println("Du hast die Schwierigkeit " +difficulty +" ausgewählt.");
         System.out.println(" ");
+        playerTaaler = loadgame();
+
     }
 
     // Monster optionen
     public static void getMonster() {
-        monsterRandom = rand.nextInt(1, 101);
+        monsterRandom = rand.nextInt(1, 20);
         int extraStuff = playerLevel * 2;
         if (monsterRandom <= 35) {
             monsterName = "Steven";
-            monsterGoldDrop = 5 + extraStuff;
-            monsterDamage = 5 + extraStuff;
+            monsterGoldDrop = (int) ((5 + extraStuff) * goldMod);
+            monsterTaalerDrop = 5;
+            monsterDamage = (int) ((5 + extraStuff) * monsterDmgMod);
             monsterDmgOvertime = 3;
-            monsterExp = 5 + extraStuff;
-            monsterHp = 48 + extraStuff;
+            monsterExp = (int) ((5 + extraStuff) * expMod);
+            monsterHp = (int) ((48 + extraStuff)* monsterHpMod);
         } else if (monsterRandom <= 70) {
             monsterName = "Chris";
-            monsterGoldDrop = 3 + extraStuff;
-            monsterDamage = 3 + extraStuff;
-            monsterExp = 1 + extraStuff;
-            monsterHp = 28 + extraStuff;
+            monsterGoldDrop = (int) ((3 + extraStuff) * goldMod);
+            monsterDamage = (int) ((3 + extraStuff) * monsterDmgMod);
+            monsterExp = (int) ((1 + extraStuff) * expMod);
+            monsterHp = (int) ((28 + extraStuff) * monsterHpMod);
         } else if (monsterRandom <= 90) {
             monsterName = "Elenaal";
-            monsterGoldDrop = rand.nextInt(3, 23) + extraStuff;
-            monsterDamage = rand.nextInt(3, 13) + extraStuff;
-            monsterExp = 13 + extraStuff;
-            monsterHp = 98 + extraStuff;
+            monsterGoldDrop = (int) ((rand.nextInt(3, 23) + extraStuff) * goldMod);
+            monsterDamage = (int) ((rand.nextInt(3, 13) + extraStuff) * monsterDmgMod);
+            monsterExp = (int) ((13 + extraStuff) * expMod);
+            monsterHp = (int) ((98 + extraStuff) * monsterHpMod);
         } else if (monsterRandom <= 99) {
             monsterName = "Velcast";
-            monsterGoldDrop = rand.nextInt(8, 48) + extraStuff;
-            monsterDamage = rand.nextInt(3, 28) + extraStuff;
-            monsterExp = 56 + extraStuff;
-            monsterHp = 248 + (playerLevel * 5);
+            monsterGoldDrop = (int) ((rand.nextInt(8, 48) + extraStuff) * goldMod);
+            monsterDamage = (int) ((rand.nextInt(3, 28) + extraStuff) * monsterDmgMod);
+            monsterExp = (int) ((56 + extraStuff) * expMod);
+            monsterHp = (int) ((248 + (playerLevel * 5)) * monsterHpMod);
         } else if (monsterRandom == 100) {
             monsterName = "Anaal";
-            monsterGoldDrop = rand.nextInt(50, 500) + extraStuff;
-            monsterDamage = rand.nextInt(1, 150) + extraStuff;
+            monsterGoldDrop = (int) ((rand.nextInt(50, 500) + extraStuff) * goldMod);
+            monsterDamage = (int) ((rand.nextInt(1, 150) + extraStuff) * monsterDmgMod);
             monsterDmgOvertime = 15;
-            monsterExp = 98 + extraStuff;
-            monsterHp = 398 + extraStuff;
+            monsterExp = (int) ((98 + extraStuff) * expMod);
+            monsterHp = (int) ((398 + extraStuff) * monsterHpMod);
         }
     }
 
@@ -283,8 +326,10 @@ public class main {
         System.out.println("Das Monster fügt dir " + monsterDamage + " Schaden zu!");
         if (monsterHp <= 0) {
             playerGold += monsterGoldDrop;
+            playerTaaler += monsterTaalerDrop;
             playerCurrentExp += monsterExp;
             playerReachedExp += monsterExp;
+            savegame(playerTaaler);
             System.out.println("Du hast das Monster besiegt! Es wurde " + monsterGoldDrop + " Gold gedroped!");
         }
 
@@ -305,6 +350,7 @@ public class main {
     //Statusausgabe
     public static void statusMessage() {
         System.out.println("-----STATUS-----");
+        System.out.println("Schwierigkeit: " +difficulty);
         System.out.println("Spielerlevel: " + playerLevel);
         System.out.println("Erfahrung: " + playerCurrentExp + "/" + playerNeededExp);
         System.out.println("Leben: " + playerCurrentLife + "/" + playerMaxLife);
@@ -314,6 +360,7 @@ public class main {
         System.out.println("Blitz-Aura Level: " +playerAbilityLightningAura);
         System.out.println("Passierschein Aal38: " +itemAal38);
         System.out.println("Gold: " + playerGold);
+        System.out.println("Taaler: " +playerTaaler);
         System.out.println("Kills : " + playerKilledMonsters);
         System.out.println("Überlebte Räume: " + position);
         System.out.println(" ");
@@ -434,5 +481,66 @@ public class main {
         }
     }
 
+    //Schwierigkeitsauswahl
+    public static void difficultySettings() {
+        switch (difficulty) {
+            case AALGLATT -> {
+                monsterHpMod = 0.8;
+                monsterDmgMod = 0.7;
+                goldMod = 1.3;
+                expMod = 1.2;
+                //healMod = 1.5;
+                //shopInterval = 6;
+            }
+            case NORMAAL -> {
+                monsterHpMod = 1.0;
+                monsterDmgMod = 1.0;
+                goldMod = 1.0;
+                expMod = 1.0;
+                //healMod = 1.0;
+                //shopInterval = 8;
+            }
+            case BRUTAAL -> {
+                monsterHpMod = 1.3;
+                monsterDmgMod = 1.4;
+                goldMod = 0.8;
+                expMod = 0.9;
+                //healMod = 0.7;
+                //shopInterval = 10;
+            }
+            case QUAALVOLL -> {
+                monsterHpMod = 1.7;
+                monsterDmgMod = 1.8;
+                goldMod = 0.6;
+                expMod = 0.7;
+                //healMod = 0.5;
+                //shopInterval = 12;
+            }
+        }
+    }
 
+
+    public static void savegame(int Taaler) {
+
+        try {
+            Files.writeString(Path.of("savegame.txt"), String.valueOf(Taaler));
+            System.out.println("Datei erfolgreich gespeichert.");
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+        loadgame();
+    }
+
+
+    public static int loadgame() {
+        int Taaler = 0;
+        try {
+            Taaler = Integer.parseInt(Files.readString(Path.of("savegame.txt")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //System.out.println("Anzahl Taaler: " +Taaler);
+        return Taaler;
+    }
 }

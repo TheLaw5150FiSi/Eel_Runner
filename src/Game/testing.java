@@ -127,6 +127,5 @@ public class testing {
                 //shopInterval = 12;
             }
         }
-
     }
 }
