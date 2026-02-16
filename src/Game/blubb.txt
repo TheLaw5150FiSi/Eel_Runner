@@ -25,6 +25,132 @@ Optionen
 
 Andere Features
 1.	Neue Räume z.B. Minigame
-2.	Trefferrate, crit chance, crit dmg
+1. Mana System
+
+___________________________________________________________
+STAT WERTE
+
+stärke - physikaalkraft
+geschwindigkeit - temporaalität
+stamina - Vitaalität
+intelligenz - Mentaaalkraft
+critchance - Kritikaalchance
+critdmg - Kritikaalschaden
+
+
+___________________________________________________________
+KLASSENSYSTEM + KLASSEN
+
+Ur-Aal (Startklasse)
+
+Rolle:  Anfänger
+Mana: 100
+
+Globaalstoß
+Kosten: 10 Mana
+Schaden: 15
+Einfacher Angriff
+
+Totaaalgriff
+Kosten: 20 Mana
+Schaden: 10
+Gegner 1 Runde betäubt
+
+Liberraalgleiten
+Kosten: 15 Mana
+Nächster erhaltener Schaden wird halbiert
+
+Naturaalhaut (Passiv)
+20% Chance, eingehenden Schaden zu halbieren
+
+___________________________________________________________
+
+Klassen ab lvl 15
+
+
+Reißzahn-Aal (Kämpfer – viel Schaden)
+Rolle: Hoher Single-Target-Schaden
+
+Brutaaalhieb
+Kosten: 15 Mana
+Schaden: 30
+
+Vitaalrausch
+Kosten: 20 Mana
+Dauer: 3 Runden
++10 Bonus-Schaden pro Angriff
+
+Moraalbruch
+Kosten: 25 Mana
+Schaden: 20
+Effekt: Gegner verursacht 2 Runden lang -5 Schaden
+
+Animaalzorn (Passiv)
+Unter 5% HP → +10 Schaden 
+
+___________________________________________________________
+
+Gewitteraal (Magier – viel Mana)
+Rolle: Starker Zauberschaden
+
+Elektriaalstoß
+Kosten: 20 Mana
+Schaden: 25
+
+Vertikaalblitz
+Kosten: 30 Mana
+Schaden: 20
+
+Totaaalsturm
+Kosten: 25 Mana
+Dauer: 3 Runden
+Gegner erleidet pro Runde 10 Schaden
+
+Arkaalspannung (Passiv)
+Wenn getroffen → Gegner erhält 5 Rückschaden
+
+___________________________________________________________
+
+Schattenaal (Assassine – crit & Gift)
+Rolle: Schaden über Zeit + mehr DMG
+
+Letaaalschlag
+Kosten: 20 Mana
+Schaden: 35
+
+Toxikaalbiss
+Kosten: 15 Mana
+Schaden: 15
+3 Runden je 5 Giftschaden
+
+Nebulaar
+Kosten: 25 Mana
+1 Runde unantastbar
+Nächster Angriff macht doppelten Schaden
+
+Letaalität (Passiv)
+5% Chance auf doppelten Schaden
+
+___________________________________________________________
+
+Eisenflosse (Tank – Kontrolle & Defensive)
+Rolle: Viel HP, wenig Schaden
+
+Horizontaalstoß
+Kosten: 15 Mana
+Schaden: 15
+Gegner 1 Runde betäubt
+
+Fundamentaalpanzer
+Kosten: 20 Mana
+3 Runden lang -10 erhaltener Schaden
+
+Zentraaler Anker
+Kosten: 20 Mana
+Schaden: 10
+Gegner wird verlangsammt - greift nurnoch jede zweite runde an
+
+Totaaalresistenz (Passiv)
++30 maximale HP
 
 

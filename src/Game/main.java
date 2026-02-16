@@ -519,7 +519,7 @@ public class main {
         }
     }
 
-
+    //Save & Load
     public static void savegame(int Taaler) {
 
         try {
@@ -531,8 +531,6 @@ public class main {
         }
         loadgame();
     }
-
-
     public static int loadgame() {
         int Taaler = 0;
         try {
