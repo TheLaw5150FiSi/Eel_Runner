@@ -51,7 +51,7 @@ Kosten: 10 Mana
 Schaden: 15
 Einfacher Angriff
 
-Totaaalgriff
+Totaalgriff
 Kosten: 20 Mana
 Schaden: 10
 Gegner 1 Runde betäubt
@@ -101,7 +101,7 @@ Vertikaalblitz
 Kosten: 30 Mana
 Schaden: 20
 
-Totaaalsturm
+Totaalsturm
 Kosten: 25 Mana
 Dauer: 3 Runden
 Gegner erleidet pro Runde 10 Schaden
@@ -114,7 +114,7 @@ ___________________________________________________________
 Schattenaal (Assassine – crit & Gift)
 Rolle: Schaden über Zeit + mehr DMG
 
-Letaaalschlag
+Letaalschlag
 Kosten: 20 Mana
 Schaden: 35
 
@@ -150,7 +150,7 @@ Kosten: 20 Mana
 Schaden: 10
 Gegner wird verlangsammt - greift nurnoch jede zweite runde an
 
-Totaaalresistenz (Passiv)
+Totaalresistenz (Passiv)
 +30 maximale HP
 
 
