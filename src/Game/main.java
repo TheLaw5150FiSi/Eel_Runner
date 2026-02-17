@@ -25,7 +25,19 @@ public class main {
             if (gs.input.equals("!status")) {
                 statusMessage(p, gs);
                 gs.position--;
-                continue;
+            } else if (gs.input.equals("!save")) {
+                p.saveAll("eelrunner.save");
+                gs.saveAll("eelrunner.save");
+                System.out.println("💾 Spiel gespeichert!");
+                gs.position--;
+            } else if (gs.input.equals("!load")) {
+                p.loadAll("eelrunner.save");
+                gs.loadAll("eelrunner.save");
+                System.out.println("💾 Spiel geladen!");
+                gs.position--;
+            } else if (gs.input.equals("rechts") || gs.input.equals("links") ||
+                    gs.input.equals("hoch") || gs.input.equals("runter")) {
+                gs.roomNumber = gs.rand.nextInt(4, 5);
             } else if (gs.input.equals("rechts") || gs.input.equals("links")
                     || gs.input.equals("hoch") || gs.input.equals("runter")) {
                 gs.roomNumber = gs.rand.nextInt(1, 6);
@@ -45,10 +57,9 @@ public class main {
                 System.out.println(" ");
             } else if (gs.roomNumber == 1) {
                 p.playerGold += 20;
-                p.playerTaaler += 5;
                 p.playerCurrentExp += 10;
                 p.playerReachedExp += 10;
-                p.savegame(p.playerTaaler);
+                p.saveAll("quick.save");
                 System.out.println("Du hast einen Schatzgefunden! +20 Gold!");
                 System.out.println("Du erhältst 10 Erfahrung!");
                 System.out.println(" ");
@@ -164,7 +175,6 @@ public class main {
         gs.difficultySettings();
         System.out.println("Du hast die Schwierigkeit " + gs.difficulty + " ausgewählt.");
         System.out.println(" ");
-        //p.playerTaaler = p.loadgame();
     }
 
     //Statusüberprüfung !status
@@ -179,8 +189,9 @@ public class main {
         System.out.println("Zitteraal: " + p.playerAbilityElectricEel);
         System.out.println("Blitz-Aura: " + p.playerAbilityLightningAura);
         System.out.println("Aal38: " + gs.itemAal38);
-        System.out.println("Gold: " + p.playerGold + " Taaler: " + p.playerTaaler);
-        System.out.println("Kills: " + p.playerKilledMonsters + " Räume: " + gs.position);
+        System.out.println("Gold: " + p.playerGold);
+        System.out.println("Kills: " + p.playerKilledMonsters );
+        System.out.println("Räume: " + gs.position);
         System.out.println(" ");
     }
 
@@ -194,10 +205,9 @@ public class main {
         System.out.println("Das Monster fügt dir " + gs.monsterDamage + " Schaden zu!");
         if (gs.monsterHp <= 0) {
             p.playerGold += gs.monsterGoldDrop;
-            p.playerTaaler += gs.monsterTaalerDrop;
             p.playerCurrentExp += gs.monsterExp;
             p.playerReachedExp += gs.monsterExp;
-            p.savegame(p.playerTaaler);
+            p.saveAll("eelrunner.save");
             System.out.println("Du hast das Monster besiegt! +" + gs.monsterGoldDrop + " Gold!");
             p.playerKilledMonsters++;
         }

@@ -17,7 +17,6 @@ public class gameState {
     public int monsterExp;
     public int monsterRandom;
     public int monsterDmgOvertime = 0;
-    public int monsterTaalerDrop = 0;
     public String monsterName;
     public int itemAal38 = 1;
     public boolean playerDead = false;
@@ -46,7 +45,6 @@ public class gameState {
         if (monsterRandom <= 35) {
             monsterName = "Steven";
             monsterGoldDrop = (int) ((5 + extraStuff) * goldMod);
-            monsterTaalerDrop = 5;
             monsterDamage = (int) ((5 + extraStuff) * monsterDmgMod);
             monsterDmgOvertime = 3;
             monsterExp = (int) ((5 + extraStuff) * expMod);
@@ -108,4 +106,37 @@ public class gameState {
             }
         }
     }
+    public void saveAll(String eelsave) {
+        try {
+            String data = position + "|" +
+                    deathRoom + "|" +
+                    roomNumber + "|" +
+                    itemAal38 + "|" +
+                    difficulty.name();
+
+            java.nio.file.Files.writeString(java.nio.file.Path.of("gs_" + eelsave), data);
+            System.out.println("GameState gespeichert!");
+        } catch (Exception e) {
+            System.out.println("GameState Save Fehler!");
+        }
+    }
+
+    public void loadAll(String eelsave) {
+        try {
+            String data = java.nio.file.Files.readString(java.nio.file.Path.of("gs_" + eelsave));
+            String[] parts = data.split("\\|");
+
+            position = Integer.parseInt(parts[0]);
+            deathRoom = Integer.parseInt(parts[1]);
+            roomNumber = Integer.parseInt(parts[2]);
+            itemAal38 = Integer.parseInt(parts[3]);
+            difficulty = Difficulty.valueOf(parts[4]);
+            difficultySettings();
+
+            System.out.println("GameState geladen: Raum " + position);
+        } catch (Exception e) {
+            System.out.println("Kein GameState gefunden!");
+        }
+    }
+
 }
