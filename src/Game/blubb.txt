@@ -1,17 +1,8 @@
 Update
 
-Difficulty  System
-1.	Difficulty variable beeinflusst alle Systeme
-2.	Monsterwert
-3.	Gold, EXP, Heilung
-4.	Warscheinlihckeiten der räume
+WICHTIG!
+Neustrukturierung des Codes!
 
-Difficulties
-1.	Easy -20% Monster HP, -30% Schaden, +30% Gold, +20% EXP, +50% Heilung
-2.	Normal keine Modifikationen
-3.	Hard +30% Monster HP, +40% Schaden, -20% Gold, -10% EXP, -30% Heilung
-4.	Nightmare +70% Monster HP, +80% Schaden, -40% Gold, -30% EXP, -50% Heilung
-monsterHpMod
 Räume
 1.	 Easy Mehr heilräume, weniger monster
 2.	 Normal Ausgewogene Verteilung

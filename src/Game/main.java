@@ -1,52 +1,9 @@
 package Game;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Random;
-import java.util.Scanner;
-
 public class main {
-
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_GREEN = "\u001B[32m";
-    //statische Variablen
-    static int[] dungeon = new int[30];
-    static int deathRoom = -1;
-    static int roomNumber = 0;
-    static String input;
-    static int position;
-
-    static int monsterGoldDrop;
-    static int monsterDamage;
-    static int monsterHp;
-    static int monsterExp;
-    static int monsterRandom;
-    static int monsterDmgOvertime = 0;
-    static int monsterTaalerDrop = 0;
-    static String monsterName;
-
-    static int itemAal38 = 1;
-
-    static int playerCurrentLife = 100;
-    static int playerMaxLife = 100;
-    static int playerCurrentExp = 0;
-    static int playerNeededExp = 100;
-    static int playerReachedExp = 0;
-    static int playerLevel = 1;
-    static int playerStr = 0;
-    static int playerDef;
-    static int playerWeaponAtk;
-    static int playerDamage;
-    static int playerGold = 0;
-    static int playerTaaler = 0;
-    static int playerKilledMonsters = 0;
-    static int playerEnteredRooms = 0;
-    static int playerAbilityElectricEel = 0;
-    static int playerAbilityLightningAura = 0;
-    static boolean playerDead = false;
-
-    static String headline = """
+    public static final String headline = """
             ███████╗███████╗██╗         ██████╗ ██╗   ██╗███╗   ██╗███╗   ██╗███████╗██████╗
             ██╔════╝██╔════╝██║         ██╔══██╗██║   ██║████╗  ██║████╗  ██║██╔════╝██╔══██
             █████╗  █████╗  ██║         ██████╔╝██║   ██║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝
@@ -54,119 +11,83 @@ public class main {
             ███████╗███████╗███████╗    ██║  ██║╚██████╔╝██║ ╚████║██║ ╚████║███████╗██║  ██║
             ╚══════╝╚══════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═
             """;
-    static int delay = 5;
-
-    static Random rand = new Random();
-    static Scanner entry = new Scanner(System.in);
-
-    //Schwierigkei Variablen
-    enum Difficulty {
-        AALGLATT,
-        NORMAAL,
-        BRUTAAL,
-        QUAALVOLL
-    }
-
-    static main.Difficulty difficulty = main.Difficulty.NORMAAL;
-    static double monsterHpMod = 1.0;
-    static double monsterDmgMod = 1.0;
-    static double goldMod = 1.0;
-    static double expMod = 1.0;
-    static double healMod = 1.0;
-    static int shopInterval = 8;
 
     public static void main(String[] args) {
+        player p = new player();
+        gameState gs = new gameState();
 
-        startSequenz();
+        startSequenz(p, gs);
 
-        //Länge des Spiels
-        for (position = 0; position < dungeon.length; position++) {
+        for (gs.position = 0; gs.position < gs.dungeon.length; gs.position++) {
             System.out.print("Gib rechts, links, hoch oder runter ein um dich zu bewegen: ");
-            input = entry.nextLine().toLowerCase();
-            if (input.equals("!status")) {
-                statusMessage();
-                continue;
+            gs.input = gs.entry.nextLine().toLowerCase();
 
-            } else if (input.equals("rechts")
-                    || input.equals("links")
-                    || input.equals("hoch")
-                    || input.equals("runter")) {
-                roomNumber = rand.nextInt(4, 5);
+            if (gs.input.equals("!status")) {
+                statusMessage(p, gs);
+                gs.position--;
+                continue;
+            } else if (gs.input.equals("rechts") || gs.input.equals("links")
+                    || gs.input.equals("hoch") || gs.input.equals("runter")) {
+                gs.roomNumber = gs.rand.nextInt(1, 6);
             } else {
-                position--;
+                gs.position--;
                 System.out.println("Bitte gültigen Wert eingeben!");
                 continue;
             }
 
-            if (playerCurrentLife <= 0) {
-                break;
-            }
-            playerEnteredRooms++;
+            if (p.playerCurrentLife <= 0) break;
+            p.playerEnteredRooms++;
             System.out.println(" ");
-            System.out.println("Raum " + (position + 1) + " betreten.");
+            System.out.println("Raum " + (gs.position + 1) + " betreten.");
 
-            //Raum 1: leer
-            if (roomNumber == 0) {
+            if (gs.roomNumber == 0) {
                 System.out.println("Der Raum ist leer!");
                 System.out.println(" ");
-
-                //Raum 2: Schatz
-            } else if (roomNumber == 1) {
-                playerGold += 20;
-                playerTaaler += 5;
-                playerCurrentExp += 10;
-                playerReachedExp += 10;
-                savegame(playerTaaler);
+            } else if (gs.roomNumber == 1) {
+                p.playerGold += 20;
+                p.playerTaaler += 5;
+                p.playerCurrentExp += 10;
+                p.playerReachedExp += 10;
+                p.savegame(p.playerTaaler);
                 System.out.println("Du hast einen Schatzgefunden! +20 Gold!");
                 System.out.println("Du erhältst 10 Erfahrung!");
                 System.out.println(" ");
-
-                //Raum 3: Falle
-            } else if (roomNumber == 2) {
-                playerCurrentLife = playerCurrentLife - 5;
-                playerCurrentExp += 5;
-                playerReachedExp += 5;
+            } else if (gs.roomNumber == 2) {
+                p.playerCurrentLife -= 5;
+                p.playerCurrentExp += 5;
+                p.playerReachedExp += 5;
                 System.out.println("Du bist in eine Falle getreten! Du verlierst 5 Leben!");
                 System.out.println("Du erhältst 5 Erfahrung!");
                 System.out.println(" ");
-
-                //Raum 4: Heiltrank
-            } else if (roomNumber == 3) {
-                healEel();
-
-                //Raum 5: MonsterRaum
-            } else if (roomNumber == 4) {
-                getMonster();
-
-                System.out.println("Ein wildes Monster namens " + monsterName + " erscheint!");
+            } else if (gs.roomNumber == 3) {
+                healEel(p);
+            } else if (gs.roomNumber == 4) {
+                gs.getMonster(p.playerLevel);
+                System.out.println("Ein wildes Monster namens " + gs.monsterName + " erscheint!");
                 System.out.print("Möchtest du kämpfen? Ja / Nein : ");
-                input = entry.nextLine().toLowerCase();
-                if (monsterDmgOvertime == 3) {
+                gs.input = gs.entry.nextLine().toLowerCase();
+
+                if (gs.monsterDmgOvertime == 3) {
                     System.out.println("Steven stinkt, du verlierst 3 Leben pro Runde!");
                 }
-                //Kampf Abfrage ja/nein
-                if (input.equals("nein")) {
+                if (gs.input.equals("nein")) {
                     System.out.println("Du bist geflohen!");
-                } else if (input.equals("ja")) {
+                } else if (gs.input.equals("ja")) {
                     do {
-                        //monsterDamage = rand.nextInt(5);
                         System.out.println("Wie möchtest du angreifen? Faust / Tritt / Schwert?");
                         System.out.println("Oder möchtest du fliehen (Aal38)?");
                         System.out.print("Eingabe: ");
-                        input = entry.nextLine().toLowerCase();
+                        gs.input = gs.entry.nextLine().toLowerCase();
 
-                        //Angriffe + Flucht
-                        if (input.equals("faust")) {
-                            playerAttack(10);
-                            //Trittangriff
-                        } else if (input.equals("tritt")) {
-                            playerAttack(15);
-                            //Schwertangriff
-                        } else if (input.equals("schwert")) {
-                            playerAttack(40);
-                        } else if (input.equals("aal38")) {
-                            if (itemAal38 > 0) {
-                                itemAal38--;
+                        if (gs.input.equals("faust")) {
+                            playerAttack(p, gs, 10);
+                        } else if (gs.input.equals("tritt")) {
+                            playerAttack(p, gs, 15);
+                        } else if (gs.input.equals("schwert")) {
+                            playerAttack(p, gs, 40);
+                        } else if (gs.input.equals("aal38")) {
+                            if (gs.itemAal38 > 0) {
+                                gs.itemAal38--;
                                 System.out.println("Du bist geflohen!");
                                 System.out.println("");
                                 break;
@@ -174,371 +95,164 @@ public class main {
                                 System.out.println("Du hast keinen Passierschein Aal38!");
                                 System.out.println("");
                             }
-                        }else {
+                        } else {
                             System.out.println("Bitte gültigen Wert eingeben!");
                             System.out.println("");
                         }
-                    } while (monsterHp > 0);
+                    } while (gs.monsterHp > 0);
                 }
-
-                //Händler + Heiltrag 10HP
-            } else if (roomNumber == 5) {
-                ShopDealer();
-            }
-            //Levelkontrolle
-            if (playerCurrentExp >= playerNeededExp) {
-                levelControl();
-            } else {
-                continue;
+            } else if (gs.roomNumber == 5) {
+                ShopDealer(p, gs);
             }
 
-            //Kritisches Leben Meldung
-            if (playerCurrentLife < 30 && playerCurrentLife > 0) {
+            if (p.playerCurrentExp >= p.playerNeededExp) {
+                levelControl(p);
+            }
+
+            if (p.playerCurrentLife < 30 && p.playerCurrentLife > 0) {
                 System.out.println("Achtung! Deine Lebenspunkte sind kritisch!");
                 System.out.println(" ");
             }
 
-            //Ende (Tot)
-            if (playerCurrentLife <= 0) {
+            if (p.playerCurrentLife <= 0) {
                 System.out.println("Du bist gestorben!");
-                playerDead = true;
-                deathRoom = position;
+                gs.playerDead = true;
+                gs.deathRoom = gs.position;
                 break;
             }
         }
-        printGameResult(playerEnteredRooms, playerCurrentLife, playerGold, playerKilledMonsters, deathRoom, playerLevel, playerReachedExp, playerDead);
+        printGameResult(p.playerEnteredRooms, p.playerCurrentLife, p.playerGold, p.playerKilledMonsters, gs.deathRoom, p.playerLevel, p.playerReachedExp, gs.playerDead);
     }
 
-    //Endausgabe
+    // Methoden
+    //Ausgabe bei beenden des Spiels
     public static void printGameResult(int enteredRooms, int life, int gold, int beatMonster, int deathRoom, int level, int reachedExp, boolean dead) {
-
         System.out.println(" ");
         System.out.println("-----SPIELENDE-----");
         System.out.println("Erreichtes Spielerlevel: " + level);
         System.out.println("Gesamt erhaltene Erfahrung: " + reachedExp);
-        System.out.println("Betretene Räume: " + enteredRooms);
         System.out.println("Verbleibendes Leben: " + life);
         System.out.println("Gesammeltes Gold: " + gold);
         System.out.println("Besiegte Monster: " + beatMonster);
-
-        //Zusatzausgabe 100+ Gold
-        if (gold >= 100) {
-            System.out.println("BONUS! Du bist reich geworden!");
-        }
-
-        //Zusatzausgabe 7+ Kills
-        if (beatMonster > 7) {
-            System.out.println("Du bist ein wahrer Kämpfer!");
-        }
-
-        //Ausgabe Todesraum / Spiel geschafft
-        if (dead == true) {
-            System.out.println("Du bist im Raum " + deathRoom + " gestorben!");
-        } else {
-            System.out.println("Du hast den Dungeon überlebt!");
-        }
+        if (gold >= 100) System.out.println("BONUS! Du bist reich geworden!");
+        if (beatMonster > 7) System.out.println("Du bist ein wahrer Kämpfer!");
+        if (dead) System.out.println("Du bist im Raum " + enteredRooms + " gestorben!");
+        else System.out.println("Du hast den Dungeon überlebt!");
     }
 
-    //Startsequenz
-    public static void startSequenz() {
+    //Vollständige Start Sequenz
+    public static void startSequenz(player p, gameState gs) {
         for (int i = 0; i < headline.length(); i++) {
             System.out.printf(ANSI_GREEN + headline.charAt(i) + ANSI_RESET);
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            try { Thread.sleep(gs.delay); } catch (InterruptedException e) { e.printStackTrace(); }
         }
-
         System.out.println(" ");
-        System.out.println("Willkommen bei eel runner! - Kämpfe dich als Aal durch eine Welt voller Einhörner, Regenwürmer und anderen wilden Getier! ");
+        System.out.println("Willkommen bei eel runner! - Kämpfe dich als Aal durch eine Welt voller Einhörner, Regenwürmer und anderen wilden Getier!");
         System.out.println("Der lange Aal schlackert im Nebel der Schlacht!");
         System.out.println("Um deine Stats zu sehen, tippe !Status ein.");
         System.out.println("Auf welcher Schwierigkeitsstufe möchtest du spielen?");
-        System.out.println("1. Aalglatt - Gleite mühelos und ohne Widerstand hindurch.");
-        System.out.println("2. NormAal - Ein ausgeglichenes Abenteuer im seichten Gewässer.");
-        System.out.println("3. BrutAal - Hier weht dir eine scharfe Brise entgegen.");
-        System.out.println("4. QuAalvoll - Nur für extrem leidensfähige und zähe Fische.");
-        System.out.println("Wähle weise!!");
+        System.out.println("1. Aalglatt 2. NormAal 3. BrutAal 4. QuAalvoll");
         System.out.print("Eingabe: ");
-        input = entry.nextLine().toLowerCase();
+        gs.input = gs.entry.nextLine().toLowerCase();
 
-        switch (input) {
-            case "aalglatt" -> difficulty = main.Difficulty.AALGLATT;
-            case "brutaal" -> difficulty = main.Difficulty.BRUTAAL;
-            case "quaalvoll" -> difficulty = main.Difficulty.QUAALVOLL;
-            default -> difficulty = main.Difficulty.NORMAAL;
+        switch (gs.input) {
+            case "aalglatt" -> gs.difficulty = gameState.Difficulty.AALGLATT;
+            case "brutaal" -> gs.difficulty = gameState.Difficulty.BRUTAAL;
+            case "quaalvoll" -> gs.difficulty = gameState.Difficulty.QUAALVOLL;
+            default -> gs.difficulty = gameState.Difficulty.NORMAAL;
         }
-        difficultySettings();
-        System.out.println("Du hast die Schwierigkeit " +difficulty +" ausgewählt.");
+        gs.difficultySettings();
+        System.out.println("Du hast die Schwierigkeit " + gs.difficulty + " ausgewählt.");
         System.out.println(" ");
-        playerTaaler = loadgame();
-
+        //p.playerTaaler = p.loadgame();
     }
 
-    // Monster optionen
-    public static void getMonster() {
-        monsterRandom = rand.nextInt(1, 20);
-        int extraStuff = playerLevel * 2;
-        if (monsterRandom <= 35) {
-            monsterName = "Steven";
-            monsterGoldDrop = (int) ((5 + extraStuff) * goldMod);
-            monsterTaalerDrop = 5;
-            monsterDamage = (int) ((5 + extraStuff) * monsterDmgMod);
-            monsterDmgOvertime = 3;
-            monsterExp = (int) ((5 + extraStuff) * expMod);
-            monsterHp = (int) ((48 + extraStuff)* monsterHpMod);
-        } else if (monsterRandom <= 70) {
-            monsterName = "Chris";
-            monsterGoldDrop = (int) ((3 + extraStuff) * goldMod);
-            monsterDamage = (int) ((3 + extraStuff) * monsterDmgMod);
-            monsterExp = (int) ((1 + extraStuff) * expMod);
-            monsterHp = (int) ((28 + extraStuff) * monsterHpMod);
-        } else if (monsterRandom <= 90) {
-            monsterName = "Elenaal";
-            monsterGoldDrop = (int) ((rand.nextInt(3, 23) + extraStuff) * goldMod);
-            monsterDamage = (int) ((rand.nextInt(3, 13) + extraStuff) * monsterDmgMod);
-            monsterExp = (int) ((13 + extraStuff) * expMod);
-            monsterHp = (int) ((98 + extraStuff) * monsterHpMod);
-        } else if (monsterRandom <= 99) {
-            monsterName = "Velcast";
-            monsterGoldDrop = (int) ((rand.nextInt(8, 48) + extraStuff) * goldMod);
-            monsterDamage = (int) ((rand.nextInt(3, 28) + extraStuff) * monsterDmgMod);
-            monsterExp = (int) ((56 + extraStuff) * expMod);
-            monsterHp = (int) ((248 + (playerLevel * 5)) * monsterHpMod);
-        } else if (monsterRandom == 100) {
-            monsterName = "Anaal";
-            monsterGoldDrop = (int) ((rand.nextInt(50, 500) + extraStuff) * goldMod);
-            monsterDamage = (int) ((rand.nextInt(1, 150) + extraStuff) * monsterDmgMod);
-            monsterDmgOvertime = 15;
-            monsterExp = (int) ((98 + extraStuff) * expMod);
-            monsterHp = (int) ((398 + extraStuff) * monsterHpMod);
-        }
-    }
-
-    //Angriffe
-    public static void playerAttack(int playerAttackStr) {
-        playerDamage = rand.nextInt(1, playerAttackStr) + playerStr;
-        monsterHp -= playerDamage;
-        playerCurrentLife -= monsterDamage;
-        playerCurrentLife -= monsterDmgOvertime;
-        System.out.println("Du hast dem Monster " + playerDamage + " zugefügt! ");
-        System.out.println("Das Monster fügt dir " + monsterDamage + " Schaden zu!");
-        if (monsterHp <= 0) {
-            playerGold += monsterGoldDrop;
-            playerTaaler += monsterTaalerDrop;
-            playerCurrentExp += monsterExp;
-            playerReachedExp += monsterExp;
-            savegame(playerTaaler);
-            System.out.println("Du hast das Monster besiegt! Es wurde " + monsterGoldDrop + " Gold gedroped!");
-        }
-
-    }
-
-    //Level Kontrolle
-    public static void levelControl() {
-        playerCurrentExp = 0;
-        playerNeededExp += 25;
-        playerMaxLife += 5;
-        playerStr += 2;
-        playerLevel++;
-        System.out.println("Level up! Du bist jetzt Level " + playerLevel + " !");
-        System.out.println("Dein maximales Leben hat sich auf " + playerMaxLife + " erhöht!");
-        System.out.println("Dein Stärkewert hat sich auf " + (10 + playerStr) + " erhöht");
-    }
-
-    //Statusausgabe
-    public static void statusMessage() {
+    //Statusüberprüfung !status
+    public static void statusMessage(player p, gameState gs) {
         System.out.println("-----STATUS-----");
-        System.out.println("Schwierigkeit: " +difficulty);
-        System.out.println("Spielerlevel: " + playerLevel);
-        System.out.println("Erfahrung: " + playerCurrentExp + "/" + playerNeededExp);
-        System.out.println("Leben: " + playerCurrentLife + "/" + playerMaxLife);
-        System.out.println("Stärke: " + (playerStr + playerWeaponAtk + 10));
-        System.out.println("Rüstung: " + (playerDef + 10));
-        System.out.println("Zitteraal Level: " +playerAbilityElectricEel);
-        System.out.println("Blitz-Aura Level: " +playerAbilityLightningAura);
-        System.out.println("Passierschein Aal38: " +itemAal38);
-        System.out.println("Gold: " + playerGold);
-        System.out.println("Taaler: " +playerTaaler);
-        System.out.println("Kills : " + playerKilledMonsters);
-        System.out.println("Überlebte Räume: " + position);
+        System.out.println("Schwierigkeit: " + gs.difficulty);
+        System.out.println("Level: " + p.playerLevel);
+        System.out.println("EXP: " + p.playerCurrentExp + "/" + p.playerNeededExp);
+        System.out.println("Leben: " + p.playerCurrentLife + "/" + p.playerMaxLife);
+        System.out.println("Stärke: " + (p.playerStr + p.playerWeaponAtk + 10));
+        System.out.println("Rüstung: " + (p.playerDef + 10));
+        System.out.println("Zitteraal: " + p.playerAbilityElectricEel);
+        System.out.println("Blitz-Aura: " + p.playerAbilityLightningAura);
+        System.out.println("Aal38: " + gs.itemAal38);
+        System.out.println("Gold: " + p.playerGold + " Taaler: " + p.playerTaaler);
+        System.out.println("Kills: " + p.playerKilledMonsters + " Räume: " + gs.position);
         System.out.println(" ");
-        position--;
     }
 
-    //Raum Heilung
-    public static void healEel() {
-        if (playerMaxLife - playerCurrentLife <= 5) {
-            playerCurrentLife = playerMaxLife;
+    //Angriffsschema
+    public static void playerAttack(player p, gameState gs, int playerAttackStr) {
+        p.playerDamage = gs.rand.nextInt(1, playerAttackStr) + p.playerStr;
+        gs.monsterHp -= p.playerDamage;
+        p.playerCurrentLife -= gs.monsterDamage;
+        p.playerCurrentLife -= gs.monsterDmgOvertime;
+        System.out.println("Du hast dem Monster " + p.playerDamage + " zugefügt!");
+        System.out.println("Das Monster fügt dir " + gs.monsterDamage + " Schaden zu!");
+        if (gs.monsterHp <= 0) {
+            p.playerGold += gs.monsterGoldDrop;
+            p.playerTaaler += gs.monsterTaalerDrop;
+            p.playerCurrentExp += gs.monsterExp;
+            p.playerReachedExp += gs.monsterExp;
+            p.savegame(p.playerTaaler);
+            System.out.println("Du hast das Monster besiegt! +" + gs.monsterGoldDrop + " Gold!");
+            p.playerKilledMonsters++;
+        }
+    }
+
+    //Level System
+    public static void levelControl(player p) {
+        p.playerCurrentExp = 0;
+        p.playerNeededExp += 25;
+        p.playerMaxLife += 5;
+        p.playerStr += 2;
+        p.playerLevel++;
+        System.out.println("Level up! Du bist jetzt Level " + p.playerLevel + "!");
+        System.out.println("Max Leben: " + p.playerMaxLife + " Stärke: " + (10 + p.playerStr));
+    }
+
+    //Heilungs Item Random Raum
+    public static void healEel(player p) {
+        if (p.playerMaxLife - p.playerCurrentLife <= 5) {
+            p.playerCurrentLife = p.playerMaxLife;
             System.out.println("Du hast einen mini Heilaal gefunden und hast dein maximales Leben aufgefüllt!");
-            System.out.println("Du hast jetzt " + playerCurrentLife + " Leben!");
-            System.out.println(" ");
-        } else if (playerMaxLife - playerCurrentLife > 5) {
-            playerCurrentLife += 5;
+        } else {
+            p.playerCurrentLife += 5;
             System.out.println("Du hast einen mini-Heilaal gefunden und bekommst 5 Leben dazu!");
-            System.out.println("Du hast jetzt " + playerCurrentLife + " Leben!");
-            System.out.println(" ");
         }
+        System.out.println("Du hast jetzt " + p.playerCurrentLife + " Leben!");
+        System.out.println(" ");
     }
 
-    //Händler
-    public static void ShopDealer() {
-
-
-        System.out.println("Du hast einen Aalhändler gefunden, du besitzt aktuell: " + playerGold + " Gold.");
-        System.out.println("aktuelles Leben: " + playerCurrentLife + "/" + playerMaxLife);
-        System.out.println("aktuelle Stärke: " + playerStr);
-        System.out.println("aktuelle Rüstung: " + playerDef);
-
-        System.out.print("Möchtest du etwas kaufen? Ja/Nein: ");
-        input = entry.nextLine().toLowerCase();
-        if (input.equals("nein")) {
-            System.out.println("Und tschüss");
-            System.out.println("");
-        } else if (input.equals("ja")) {
-            String shopDisplay = """
-                    
-                    -----Verfügbare Artikel-----
-                    1. Großer Heilaal +20hp | 50 Gold
-                    2. EXP Aalexier +20 EXP | 125 Gold
-                    3. HP Maximaaltrank +10hp | 275 Gold
-                    4. Item: Passierschein Aal38 - ermöglicht die Flucht aus seinem Kampf | 300 Gold
-                    5. Fähigkeit Zitteraal + 2 Stärke | 275 Gold
-                    6. Fähigkeit Blitz-Aura + 2 Rüstung | 275 Gold
-                    
-                    7. Shop verlassen
-                    
-                    Was möchtest du kaufen?
-                    Bitte die Passende Nummer eingeben: """;
-            do {
-                System.out.println(shopDisplay);
-                input = entry.nextLine();
-                if (input.equals("1")) {
-                    if (playerGold < 50) {
-                        System.out.println("Du hast leider nicht genug Gold!");
-                        continue;
-                    }
-                    if (playerMaxLife - playerCurrentLife <= 20) {
-                        playerCurrentLife = playerMaxLife;
-                        System.out.println("Du hast einen großen Heilaal gekauft und hast jetzt " + playerCurrentLife + " Leben");
-                        playerGold -= 50;
-                    } else if (playerMaxLife - playerCurrentLife > 20) {
-                        playerCurrentLife += 20;
-                        System.out.println("Du hast einen großer Heilaal gekauft und hast jetzt " + playerCurrentLife + " Leben");
-                        playerGold -= 50;
-                    }
-                } else if (input.equals("2")) {
-                    if (playerGold < 125) {
-                        System.out.println("Du hast leider nicht genug Gold!");
-                    } else {
-                        System.out.println("Du hast ein EXP Aalexier gekauft und erhältst 20 Erfahrung!");
-                        playerCurrentExp += 20;
-                        playerReachedExp += 20;
-                        playerGold -= 125;
-                    }
-                } else if (input.equals("3")) {
-                    if (playerGold < 275) {
-                        System.out.println("Du hast leider nicht genug Gold!");
-                    } else {
-                        System.out.println("Du hast einen HP Maximaaltrank gekauft und hast jetzt " + playerCurrentLife + " / " + (playerMaxLife + 10));
-                        playerCurrentLife += 10;
-                        playerGold -= 275;
-                    }
-
-                } else if (input.equals("4")) {
-                    if (playerGold < 300) {
-                        System.out.println("Du hast leider nicht genug Gold!");
-                    } else {
-                        System.out.println("Du hast einen Passierschein Aal38 gekauft und hast jetzt " + itemAal38 + "Passierscheine.");
-                        itemAal38++;
-                        playerGold -= 300;
-                    }
-
-                } else if (input.equals("5")) {
-                    if (playerGold < 275) {
-                        System.out.println("Du hast leider nicht genug Gold!");
-                    } else {
-                        System.out.println("Du hast die Fähigkeit Zitteraal gekauft und erhältst +1 Stärke");
-                        playerAbilityElectricEel++;
-                        playerStr++;
-                        playerGold -= 275;
-                    }
-                } else if (input.equals("6")) {
-                    if (playerGold < 275) {
-                        System.out.println("Du hast leider nicht genug Gold!");
-                    } else {
-                        System.out.println("Du hast die Fähigkeit Blitz-Aura gekauft und erhältst +1 Rüstung");
-                        playerDef++;
-                        playerAbilityLightningAura++;
-                        playerGold -= 275;
-                    }
-                } else if (input.equals("7")) {
-                    System.out.println("Du hast den Shop verlassen!");
-                    System.out.println("");
-                }
-            } while (!input.equals("7"));
+    //Shop Händler
+    public static void ShopDealer(player p, gameState gs) {
+        System.out.println("Aalhändler! Gold: " + p.playerGold);
+        System.out.print("Kaufen? Ja/Nein: ");
+        gs.input = gs.entry.nextLine().toLowerCase();
+        if (gs.input.equals("nein")) {
+            System.out.println("Tschüss!");
+            return;
         }
-    }
 
-    //Schwierigkeitsauswahl
-    public static void difficultySettings() {
-        switch (difficulty) {
-            case AALGLATT -> {
-                monsterHpMod = 0.8;
-                monsterDmgMod = 0.7;
-                goldMod = 1.3;
-                expMod = 1.2;
-                //healMod = 1.5;
-                //shopInterval = 6;
+        String shop = "1.Heilaal(50G) 2.EXP(125G) 3.HPMax(275G) 4.Aal38(300G) 5.Zitteraal(275G) 6.Blitz(275G) 7.Exit";
+        do {
+            System.out.println(shop);
+            gs.input = gs.entry.nextLine();
+            if (gs.input.equals("1") && p.playerGold >= 50) {
+                p.playerCurrentLife = Math.min(p.playerMaxLife, p.playerCurrentLife + 20);
+                p.playerGold -= 50;
+                System.out.println("+" + p.playerCurrentLife + " HP!");
+            } else if (gs.input.equals("2") && p.playerGold >= 125) {
+                p.playerCurrentExp += 20;
+                p.playerReachedExp += 20;
+                p.playerGold -= 125;
+            } else if (gs.input.equals("7")) {
+                break;
             }
-            case NORMAAL -> {
-                monsterHpMod = 1.0;
-                monsterDmgMod = 1.0;
-                goldMod = 1.0;
-                expMod = 1.0;
-                //healMod = 1.0;
-                //shopInterval = 8;
-            }
-            case BRUTAAL -> {
-                monsterHpMod = 1.3;
-                monsterDmgMod = 1.4;
-                goldMod = 0.8;
-                expMod = 0.9;
-                //healMod = 0.7;
-                //shopInterval = 10;
-            }
-            case QUAALVOLL -> {
-                monsterHpMod = 1.7;
-                monsterDmgMod = 1.8;
-                goldMod = 0.6;
-                expMod = 0.7;
-                //healMod = 0.5;
-                //shopInterval = 12;
-            }
-        }
-    }
-
-    //Save & Load
-    public static void savegame(int Taaler) {
-
-        try {
-            Files.writeString(Path.of("savegame.txt"), String.valueOf(Taaler));
-            System.out.println("Datei erfolgreich gespeichert.");
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        loadgame();
-    }
-    public static int loadgame() {
-        int Taaler = 0;
-        try {
-            Taaler = Integer.parseInt(Files.readString(Path.of("savegame.txt")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //System.out.println("Anzahl Taaler: " +Taaler);
-        return Taaler;
+            // Füge hier den Rest deines Shops hinzu wenn gewünscht
+        } while (!gs.input.equals("7"));
     }
 }
