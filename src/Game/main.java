@@ -15,7 +15,7 @@ public class main {
     public static String headline2 = """
     Schwierigkeit: %s
     Klasse: %s
-    Level: %-3d  EXP: %-4d/%-4d
+    Level: %-3d  EXP: %4d/%-4d
     Leben: %4d /%-4d Mana: %4d/%-4d
     Stärke: %-3d Stamina: %-3d
     Intelligenz: %d

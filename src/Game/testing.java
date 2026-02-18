@@ -1,131 +1,69 @@
 package Game;
 
-import java.util.Random;
-import java.util.Scanner;
-
 public class testing {
+    public static String headline2;
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    //statische Variablen
-    static int[] dungeon = new int[30];
-    static int deathRoom = -1;
-    static int roomNumber = 0;
-    static String input;
-    static int position;
-
-    static int monsterGoldDrop;
-    static int monsterDamage;
-    static int monsterHp;
-    static int monsterExp;
-    static int monsterRandom;
-    static int monsterDmgOvertime = 0;
-    static String monsterName;
-
-    static int itemAal38 = 1;
-
-    static int playerCurrentLife = 100;
-    static int playerMaxLife = 100;
-    static int playerCurrentExp = 0;
-    static int playerNeededExp = 100;
-    static int playerReachedExp = 0;
-    static int playerLevel = 1;
-    static int playerStr = 0;
-    static int playerDef;
-    static int playerWeaponAtk;
-    static int playerDamage;
-    static int playerGold = 0;
-    static int playerKilledMonsters = 0;
-    static int playerEnteredRooms = 0;
-    static int playerAbilityElectricEel = 0;
-    static int playerAbilityLightningAura = 0;
-    static boolean playerDead = false;
-
-    static String headline = """
-            ███████╗███████╗██╗         ██████╗ ██╗   ██╗███╗   ██╗███╗   ██╗███████╗██████╗
-            ██╔════╝██╔════╝██║         ██╔══██╗██║   ██║████╗  ██║████╗  ██║██╔════╝██╔══██
-            █████╗  █████╗  ██║         ██████╔╝██║   ██║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝
-            ██╔══╝  ██╔══╝  ██║         ██╔══██╗██║   ██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗
-            ███████╗███████╗███████╗    ██║  ██║╚██████╔╝██║ ╚████║██║ ╚████║███████╗██║  ██║
-            ╚══════╝╚══════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═
-            """;
-    static int delay = 5;
-
-    static Random rand = new Random();
-    static Scanner entry = new Scanner(System.in);
-
-    //NEUER PART
-    enum Difficulty {
-        AALGLATT,
-        NORMAAL,
-        BRUTAAL,
-        QUAALVOLL
+    // Player und GameState Klassen (vereinfacht)
+    static class player {
+        String playerClass = "Warrior";
+        int playerLevel = 115;
+        int playerCurrentExp = 2345;
+        int playerNeededExp = 5000;
+        int playerCurrentLife = 850;
+        int playerMaxLife = 1000;
+        int playerCurrentMana = 120;
+        int playerMaxMana = 300;
+        int playerStrength = 1125;
+        int playerStamina = 18;
+        int playerIntelligence = 12;
+        int playerCritChance = 8;
+        int playerCritDamage = 150;
+        int playerGold = 1250;
+        int playerKilledMonsters = 47;
     }
 
-    static Difficulty difficulty = Difficulty.NORMAAL;
-    static double monsterHpMod = 1.0;
-    static double monsterDmgMod = 1.0;
-    static double goldMod = 1.0;
-    static double expMod = 1.0;
-    static double healMod = 1.0;
-    static int shopInterval = 8;
+    static class gameState {
+        String difficulty = "Hard";
+        int itemAal38 = 1;
+        int position = 12;
+    }
 
+    private static void setupHeadline2(player p, gameState gs) {
+        StringBuilder sb = new StringBuilder();
+
+        // ╔═══════╤══════════════════════╤══════════╗ 40 Char
+        sb.append("╔═══════════════════════════════════╗").append("\n");
+        sb.append("║         CHARAKTER STATUS          ║").append("\n");
+        sb.append("╠══════════════════╦════════════════╣").append("\n");
+        sb.append(String.format("║ Level            ║  %-13d ║%n", p.playerLevel));
+        sb.append(String.format("║ EXP              ║  %4d/%-4d     ║%n", p.playerCurrentExp, p.playerNeededExp));
+        sb.append(String.format("║ Klasse           ║  %-13s ║%n",p.playerClass));
+        sb.append("╠──────────────────╬────────────────╣").append("\n");
+        sb.append(String.format("║ HP               ║ %4d/%-4d      ║%n",
+                p.playerCurrentLife, p.playerMaxLife));
+        sb.append(String.format("║ MP               ║ %4d/%-4d      ║%n",
+                p.playerCurrentMana, p.playerMaxMana));
+        sb.append("╠──────────────────╬────────────────╣").append("\n");
+        sb.append(String.format("║ Physkaalkraft    ║  %-13d ║%n", p.playerStrength));
+        sb.append(String.format("║ Vitaalität       ║  %-13d ║%n", p.playerStamina));
+        sb.append(String.format("║ Mentaalkraft     ║  %-13d ║%n", p.playerIntelligence));
+        sb.append(String.format("║ Kritikaalchance  ║  %-13d ║%n", p.playerCritChance));
+        sb.append(String.format("║ Kritikaalschaden ║  %-13d ║%n", p.playerCritDamage));
+        sb.append("╠──────────────────╬────────────────╣").append("\n");
+        sb.append(String.format("║ Aal38            ║  %-13d ║%n", gs.itemAal38));
+        sb.append(String.format("║ Gold             ║  %-13d ║%n", p.playerGold));
+        sb.append(String.format("║ Kills            ║  %-13d ║%n", p.playerKilledMonsters));
+        sb.append(String.format("║ Räume            ║  %-13d ║%n", gs.position));
+        sb.append("╚══════════════════╩════════════════╝").append("\n");
+
+        headline2 = sb.toString();
+    }
 
     public static void main(String[] args) {
-        System.out.println("Auf welcher Schwierigkeitsstufe möchtest du spielen?");
-        System.out.println("1. Aalglatt - Gleite mühelos und ohne Widerstand hindurch.");
-        System.out.println("2. NormAal - Ein ausgeglichenes Abenteuer im seichten Gewässer.");
-        System.out.println("3. BrutAal - Hier weht dir eine scharfe Brise entgegen.");
-        System.out.println("4. QuAalvoll - Nur für extrem leidensfähige und zähe Fische.");
-        System.out.println("Wähle weise!!");
-        System.out.print("Eingabe: ");
-        input = entry.nextLine().toLowerCase();
+        player p = new player();
+        gameState gs = new gameState();
 
-        switch (input) {
-            case "aalglatt" -> difficulty = Difficulty.AALGLATT;
-            case "brutaal" -> difficulty = Difficulty.BRUTAAL;
-            case "quaalvoll" -> difficulty = Difficulty.QUAALVOLL;
-            default -> difficulty = Difficulty.NORMAAL;
-        }
-        difficultySettings();
-        System.out.println("Du hast die Schwierigkeit " +difficulty +" ausgewählt.");
-        System.out.println(" ");
-    }
-
-    public static void difficultySettings() {
-        switch (difficulty) {
-            case AALGLATT -> {
-                monsterHpMod = 0.8;
-                monsterDmgMod = 0.7;
-                goldMod = 1.3;
-                expMod = 1.2;
-                //healMod = 1.5;
-                //shopInterval = 6;
-            }
-            case NORMAAL -> {
-                monsterHpMod = 1.0;
-                monsterDmgMod = 1.0;
-                goldMod = 1.0;
-                expMod = 1.0;
-                //healMod = 1.0;
-                //shopInterval = 8;
-            }
-            case BRUTAAL -> {
-                monsterHpMod = 1.3;
-                monsterDmgMod = 1.4;
-                goldMod = 0.8;
-                expMod = 0.9;
-                //healMod = 0.7;
-                //shopInterval = 10;
-            }
-            case QUAALVOLL -> {
-                monsterHpMod = 1.7;
-                monsterDmgMod = 1.8;
-                goldMod = 0.6;
-                expMod = 0.7;
-                //healMod = 0.5;
-                //shopInterval = 12;
-            }
-        }
+        setupHeadline2(p, gs);
+        System.out.println(headline2);
     }
 }

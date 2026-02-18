@@ -21,7 +21,7 @@ public class gameState {
     public String monsterName;
     public int itemAal38 = 1;
     public boolean playerDead = false;
-    public int delay = 0;
+    public int delay = 5;
     public Random rand = new Random();
     public Scanner entry = new Scanner(System.in);
 
