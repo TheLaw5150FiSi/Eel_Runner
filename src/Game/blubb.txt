@@ -142,4 +142,73 @@ Gegner wird verlangsammt - greift nurnoch jede zweite runde an
 Totaalresistenz (Passiv)
 +30 maximale HP
 
+public class PlayerStatsDisplay {
+    public static String headline2;
+
+    // Player und GameState Klassen (vereinfacht)
+    static class player {
+        String playerClass = "Warrior";
+        int playerLevel = 15;
+        int playerCurrentExp = 2345;
+        int playerNeededExp = 5000;
+        int playerCurrentLife = 850;
+        int playerMaxLife = 1000;
+        int playerCurrentMana = 120;
+        int playerMaxMana = 300;
+        int playerStrength = 25;
+        int playerStamina = 18;
+        int playerIntelligence = 12;
+        int playerCritChance = 8;
+        int playerCritDamage = 150;
+        int playerGold = 1250;
+        int playerKilledMonsters = 47;
+    }
+
+    static class gameState {
+        String difficulty = "Hard";
+        int itemAal38 = 1;
+        int position = 12;
+    }
+
+    private static void setupHeadline2(player p, gameState gs) {
+        StringBuilder sb = new StringBuilder();
+
+        // ╔═══════╤══════════════════════╤══════════╗
+        sb.append("╔══════════════════════════════════════╗").append("\n");
+        sb.append("║          CHARAKTER STATUS            ║").append("\n");
+        sb.append("╠═══════╦══════════════════════╦═══════╣").append("\n");
+        sb.append(String.format("║ %-5s ║ %-22s ║ %5d ║%n", "LVL", p.playerClass, p.playerLevel));
+        sb.append(String.format("║ %s ║ EXP: %4d/%-4d         ║%n",
+            String.format("%-5s", "EXP"), p.playerCurrentExp, p.playerNeededExp));
+        sb.append("╠───────╬──────────────────────╬───────╣").append("\n");
+        sb.append(String.format("║ HP    ║ %4d/%-4d           ║%n",
+            p.playerCurrentLife, p.playerMaxLife));
+        sb.append(String.format("║ MP    ║ %4d/%-4d           ║%n",
+            p.playerCurrentMana, p.playerMaxMana));
+        sb.append("╠───────╬──────────────────────╬───────╣").append("\n");
+        sb.append(String.format("║ STR   ║ %-22d ║%n", p.playerStrength));
+        sb.append(String.format("║ STA   ║ %-22d ║%n", p.playerStamina));
+        sb.append(String.format("║ INT   ║ %-22d ║%n", p.playerIntelligence));
+        sb.append(String.format("║ CRIT  ║ %d%%/%d%%           ║%n",
+            p.playerCritChance, p.playerCritDamage));
+        sb.append("╠───────╬──────────────────────╬───────╣").append("\n");
+        sb.append(String.format("║ Aal38 ║ %-22d ║%n", gs.itemAal38));
+        sb.append(String.format("║ Gold  ║ %10d G        ║%n", p.playerGold));
+        sb.append(String.format("║ Kills ║ %-22d ║%n", p.playerKilledMonsters));
+        sb.append(String.format("║ Räume ║ Room %2d            ║%n", gs.position));
+        sb.append("╚═══════╩══════════════════════╩═══════╝").append("\n");
+
+        headline2 = sb.toString();
+    }
+
+    public static void main(String[] args) {
+        player p = new player();
+        gameState gs = new gameState();
+
+        setupHeadline2(p, gs);
+        System.out.println(headline2);
+    }
+}
+
+
 
