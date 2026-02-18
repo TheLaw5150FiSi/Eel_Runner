@@ -12,9 +12,40 @@ public class main {
             ╚══════╝╚══════╝╚══════╝    ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═
             """;
 
+    public static String headline2 = """
+    Schwierigkeit: %s
+    Klasse: %s
+    Level: %-3d  EXP: %-4d/%-4d
+    Leben: %4d /%-4d Mana: %4d/%-4d
+    Stärke: %-3d Stamina: %-3d
+    Intelligenz: %d
+    Critchance: %-3d  Critdamage: %-3d
+    Aal38: %d
+    Gold: %d
+    Kills: %-4d  Räume: %-3d
+    """;
+    private static void setupHeadline2(player p, gameState gs) {
+        headline2 = headline2.formatted(
+                gs.difficulty,
+                p.playerClass,
+                p.playerLevel, p.playerCurrentExp, p.playerNeededExp,
+                p.playerCurrentLife, p.playerMaxLife, p.playerCurrentMana, p.playerMaxMana,
+                p.playerStrength,
+                p.playerStamina,
+                p.playerIntelligence,
+                p.playerCritChance,
+                p.playerCritDamage,
+                gs.itemAal38,
+                p.playerGold,
+                p.playerKilledMonsters,
+                gs.position
+        );
+    }
+
+
     public static void main(String[] args) {
+        gameState gs = gameState.getInstance();
         player p = new player();
-        gameState gs = new gameState();
 
         startSequenz(p, gs);
 
@@ -35,9 +66,6 @@ public class main {
                 gs.loadAll("eelrunner.save");
                 System.out.println("💾 Spiel geladen!");
                 gs.position--;
-            } else if (gs.input.equals("rechts") || gs.input.equals("links") ||
-                    gs.input.equals("hoch") || gs.input.equals("runter")) {
-                gs.roomNumber = gs.rand.nextInt(4, 5);
             } else if (gs.input.equals("rechts") || gs.input.equals("links")
                     || gs.input.equals("hoch") || gs.input.equals("runter")) {
                 gs.roomNumber = gs.rand.nextInt(1, 6);
@@ -155,7 +183,11 @@ public class main {
     public static void startSequenz(player p, gameState gs) {
         for (int i = 0; i < headline.length(); i++) {
             System.out.printf(ANSI_GREEN + headline.charAt(i) + ANSI_RESET);
-            try { Thread.sleep(gs.delay); } catch (InterruptedException e) { e.printStackTrace(); }
+            try {
+                Thread.sleep(gs.delay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         System.out.println(" ");
         System.out.println("Willkommen bei eel runner! - Kämpfe dich als Aal durch eine Welt voller Einhörner, Regenwürmer und anderen wilden Getier!");
@@ -179,25 +211,13 @@ public class main {
 
     //Statusüberprüfung !status
     public static void statusMessage(player p, gameState gs) {
-        System.out.println("-----STATUS-----");
-        System.out.println("Schwierigkeit: " + gs.difficulty);
-        System.out.println("Level: " + p.playerLevel);
-        System.out.println("EXP: " + p.playerCurrentExp + "/" + p.playerNeededExp);
-        System.out.println("Leben: " + p.playerCurrentLife + "/" + p.playerMaxLife);
-        System.out.println("Stärke: " + (p.playerStr + p.playerWeaponAtk + 10));
-        System.out.println("Rüstung: " + (p.playerDef + 10));
-        System.out.println("Zitteraal: " + p.playerAbilityElectricEel);
-        System.out.println("Blitz-Aura: " + p.playerAbilityLightningAura);
-        System.out.println("Aal38: " + gs.itemAal38);
-        System.out.println("Gold: " + p.playerGold);
-        System.out.println("Kills: " + p.playerKilledMonsters );
-        System.out.println("Räume: " + gs.position);
-        System.out.println(" ");
+        setupHeadline2(p, gs);
+        System.out.println(headline2);
     }
 
     //Angriffsschema
     public static void playerAttack(player p, gameState gs, int playerAttackStr) {
-        p.playerDamage = gs.rand.nextInt(1, playerAttackStr) + p.playerStr;
+        p.playerDamage = gs.rand.nextInt(1, playerAttackStr) + p.playerStrength;
         gs.monsterHp -= p.playerDamage;
         p.playerCurrentLife -= gs.monsterDamage;
         p.playerCurrentLife -= gs.monsterDmgOvertime;
@@ -218,10 +238,11 @@ public class main {
         p.playerCurrentExp = 0;
         p.playerNeededExp += 25;
         p.playerMaxLife += 5;
-        p.playerStr += 2;
+        p.playerStrength += 2;
         p.playerLevel++;
         System.out.println("Level up! Du bist jetzt Level " + p.playerLevel + "!");
-        System.out.println("Max Leben: " + p.playerMaxLife + " Stärke: " + (10 + p.playerStr));
+        p.playerClasses();
+        System.out.println(" ");
     }
 
     //Heilungs Item Random Raum

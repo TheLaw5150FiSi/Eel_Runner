@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class gameState {
+    private static gameState instance;
 
     // Variablen
     public int[] dungeon = new int[30];
@@ -20,7 +21,7 @@ public class gameState {
     public String monsterName;
     public int itemAal38 = 1;
     public boolean playerDead = false;
-    public int delay = 5;
+    public int delay = 0;
     public Random rand = new Random();
     public Scanner entry = new Scanner(System.in);
 
@@ -36,7 +37,14 @@ public class gameState {
     public double healMod = 1.0;
     public int shopInterval = 8;
 
-    public gameState() {}
+    public static gameState getInstance() {
+        if (instance == null)
+            instance = new gameState();
+
+        return instance;
+    }
+
+    private gameState() {}
 
     //Monster Typ
     public void getMonster(int playerLevel) {
@@ -106,6 +114,7 @@ public class gameState {
             }
         }
     }
+
     public void saveAll(String eelsave) {
         try {
             String data = position + "|" +
@@ -137,6 +146,10 @@ public class gameState {
         } catch (Exception e) {
             System.out.println("Kein GameState gefunden!");
         }
+    }
+
+    public void scannerEntry() {
+
     }
 
 }

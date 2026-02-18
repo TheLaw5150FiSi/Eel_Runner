@@ -1,7 +1,5 @@
 Update
 
-WICHTIG!
-Neustrukturierung des Codes!
 
 Räume
 1.	 Easy Mehr heilräume, weniger monster
